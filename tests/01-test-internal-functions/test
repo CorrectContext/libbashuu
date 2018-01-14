@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -eu
+source $(dirname $0)/../../libbashuu
+
+# just a string for comparing outputs in tests
+XXX="DEBUG MODE $RANDOM ĄŁÓW"
+
+# checking uu::is-debug
+[ "$(DEBUG=1 uu::is-debug && echo "yes" || echo "no")" == "yes" ] || exit 50
+[ "$(DEBUG=  uu::is-debug && echo "yes" || echo "no")" == "no" ]  || exit 51
+
+# checking whether uu::debug outputs to stderr, only if debug is turned on
+[ "$(DEBUG=  uu::debug "$XXX"                )"    == "" ]                      || exit 52
+[ "$(DEBUG=  uu::debug "$XXX" 2>&1 >/dev/null)"    == "" ]                      || exit 53
+[ "$(DEBUG=1 uu::debug "$XXX"       2>/dev/null)"  == "" ]                      || exit 54
+[[ "$(DEBUG=1 uu::debug "$XXX" 2>&1 > /dev/null )" =~ "][DEBUG][test]: $XXX" ]] || exit 55
+
+# checking whether uu::internal-debug outputs to stderr, only if uudebug is turned on
+[ "$(UUDEBUG=  uu::internal-debug "$XXX"                )"    == "" ]                        || exit 56
+[ "$(UUDEBUG=  uu::internal-debug "$XXX" 2>&1 >/dev/null)"    == "" ]                        || exit 57
+[ "$(UUDEBUG=1 uu::internal-debug "$XXX"       2>/dev/null)"  == "" ]                        || exit 58
+[[ "$(UUDEBUG=1 uu::internal-debug "$XXX" 2>&1 > /dev/null )" =~ "][UUDEBUG][test]: $XXX" ]] || exit 59
+
+# checking whether uu::internal-debug reacts to debug flag (should react only to uudebug flag)
+[ "$(DEBUG=1  uu::internal-debug "$XXX"                )"    == "" ]                        || exit 60
+[ "$(DEBUG=1  uu::internal-debug "$XXX" 2>&1 >/dev/null)"    == "" ]                        || exit 61

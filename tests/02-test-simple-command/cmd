@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+source libbashuu
+
+long=my-option0         env=MY_OPTION0 validators=existing-path help="no short"          required=true uu::command::define-option
+long=my-option1 short=  env=MY_OPTION1 validators=existing-path help="empty short"          required=true uu::command::define-option
+long=my-option2 short=b env=MY_OPTION2 validators=existing-path required=0 uu::command::define-option  # no help
+long=my-option3 short=c env=MY_OPTION3 default=bla validators= help="with default" required=0 uu::command::define-option
+uu::command::main "$@"
+
+# at this point args are parsed and we can use environment variables
+echo "EXECUTING COMMAND"

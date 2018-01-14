@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+exit 0
+HERE=$(dirname $0)
+
+for run_this in "$HERE/app" "$HERE/cmd1" "$HERE/cmd2"
+do
+  $run_this
+  $run_this -h
+  $run_this --help
+  DEBUG=1 $run_this --help
+  UUDEBUG=1 $run_this --help
+  UUDEBUG=1 DEBUG=1 $run_this --help
+  $run_this --debug
+  $run_this --uudebug
+  $run_this --meta
+done
+
+$HERE/app cmd1
+$HERE/app cmd1 --help
+$HERE/app cmd2
+$HERE/app cmd2 --help

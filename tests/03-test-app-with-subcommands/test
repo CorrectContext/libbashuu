@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -eu
+HERE=$(dirname $0)
+
+# uu::command - single command with flags and options
+
+
+diff <($HERE/app --help) <($HERE/app) || exit 50
+diff <($HERE/app --help 2>&1) <($HERE/app 2>&1) || exit 51
+$HERE/app && exit 52
+$HERE/app --help || exit 53
+$HERE/app -h || exit 54
+diff <($HERE/app -h) <(cat <<EOF
+app - bla bla bla
+
+Usage: app COMMAND [options]
+
+  Scope 1:
+    cmd1                  Description1
+
+  Scope 2:
+    cmd2                  Description2
+
+  Scope 3:
+
+  NOT IMPLEMENTED PROPERLY:
+
+
+EOF
+) || exit 55
+
+diff <(tests/03-test-app-with-subcommands/app --does-not-exist 2>&1 | cut -d']' -f2-) <(cat <<EOF
+[ERROR][app]: INTERNAL ERROR: xc command 'app---does-not-exist' is not implemented!
+[ERROR][app]: HINT: If you think this command needs to exist implement 'app---does-not-exist' and put it in the search PATH.
+[ERROR][app]: DETAILS: 'app---does-not-exist' cannot be found in PATH.
+EOF
+) || exit 56
+
+
+$HERE/app cmd1 --help || exit 57
+$HERE/app cmd2 --help || exit 58
+diff <($HERE/app cmd1 --help 2>&1) <($HERE/app-cmd1 --help 2>&1) || exit 59
+diff <($HERE/app cmd2 --help 2>&1) <($HERE/app-cmd2 --help 2>&1) || exit 70
+
+$HERE/app cmd1 --my-option0 / --my-option1 / --my-option2 / || exit 71
+$HERE/app cmd2 --my-option0 / --my-option1 / --my-option2 / || exit 72
+diff <($HERE/app cmd1 --my-option0 / --my-option1 / --my-option2 /) \
+     <($HERE/app-cmd1 --my-option0 / --my-option1 / --my-option2 /) || exit 73
+diff <($HERE/app cmd2 --my-option0 / --my-option1 / --my-option2 /) \
+     <($HERE/app-cmd2 --my-option0 / --my-option1 / --my-option2 /) || exit 74
+
+diff <($HERE/app cmd1 --my-option0 / --my-option1 / --my-option2 / --my-option3 ///) \
+     <($HERE/app-cmd1 --my-option0 / --my-option1 / --my-option2 / -c ///) || exit 75
+diff <($HERE/app cmd2 --my-option0 / --my-option1 / --my-option2 / --my-option3 ///) \
+     <($HERE/app-cmd2 --my-option0 / --my-option1 / --my-option2 / -c ///) || exit 76
+
+diff <($HERE/app cmd1) <(cat <<'EOF'
+Usage: app-cmd1
+
+     | --my-option0 VAL  | MY_OPTION0      - (required, default:'')
+                                             no short
+     | --my-option1 VAL  | MY_OPTION1      - (required, default:'')
+                                             empty short
+  -c | --my-option3 VAL  | MY_OPTION3      - (optional, default:/)
+                                             with default
+  -h | --help                              - print help
+     | --debug           | DEBUG           - show debug logs
+                                             (env DEBUG shows also parsing debug logs)
+     | --META                              - print command metadata
+EOF
+) || exit 77
+
+$HERE/app cmd1 --META || exit 78
+$HERE/app cmd2 --META || exit 79
+
+diff <($HERE/app-cmd1 --my-option1 2>&1 | head -n1 | cut -d']' -f2-) \
+     <(echo "[ERROR][app-cmd1]: Option 'my-option1' requires argument!") || exit 80
+diff <($HERE/app-cmd1 --my-option1 2>&1 | tail -n1 | cut -d']' -f2-) \
+     <(echo "[ERROR][app-cmd1]: Option 'my-option1' requires argument!") || exit 81
+diff <($HERE/app-cmd1 -c 2>&1 | tail -n1 | cut -d']' -f2-) \
+     <(echo "[ERROR][app-cmd1]: Option 'my-option3' requires argument!") || exit 82
+
+diff <($HERE/app-cmd1 --my-option0 / 2>&1 | tail -n1 | cut -d']' -f2-) \
+     <(echo "[ERROR][app-cmd1]: Option 'my-option1' is required!") || exit 83
+diff <($HERE/app-cmd1 --my-option5 2>&1 | tail -n1 | cut -d']' -f2-) \
+     <(echo "[ERROR][app-cmd1]: Option or flag '--my-option5' not defined!") || exit 84
+
+diff <($HERE/app-cmd1 -g 2>&1 | tail -n1 | cut -d']' -f2-) \
+     <(echo "[ERROR][app-cmd1]: Option or flag '-g' not defined!") || exit 84

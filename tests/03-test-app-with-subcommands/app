@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+source libbashuu
+
+export PATH=$(dirname $0):$PATH
+uu::app::add-scope scope1 "Scope 1"
+uu::app::add-scope scope2 "Scope 2"
+uu::app::add-scope scope3 "Scope 3"
+uu::app::set-description "bla bla bla"
+uu::app::main "$@"

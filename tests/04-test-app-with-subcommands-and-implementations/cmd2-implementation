@@ -1,0 +1,2 @@
+uu::debug "running some ls (version 2)"
+ls -l "$WHERE"

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -eu
+HERE=$(dirname $0)
+
+# uu::command - single command with flags and options
+
+$HERE/cmd 2>&1 | grep "Option 'my-option0' is required!"
+
+$HERE/cmd -h || exit 52
+diff <($HERE/cmd --help 2>&1) <(echo "Usage: cmd
+
+     | --my-option0 VAL  | MY_OPTION0      - (required, default:'')
+                                             no short
+     | --my-option1 VAL  | MY_OPTION1      - (required, default:'')
+                                             empty short
+  -c | --my-option3 VAL  | MY_OPTION3      - (optional, default:bla)
+                                             with default
+  -h | --help                              - print help
+     | --debug           | DEBUG           - show debug logs
+                                             (env DEBUG shows also parsing debug logs)
+     | --META                              - print command metadata") || exit 53
+DEBUG=1 $HERE/cmd --help || exit 54
+UUDEBUG=1 $HERE/cmd --help || exit 55
+UUDEBUG=1 DEBUG=1 $HERE/cmd --help || exit 56
+$HERE/cmd --help --debug || exit 57
+$HERE/cmd --help --uudebug || exit 58
+
+diff <($HERE/cmd --META) <(echo "[meta]
+scope=
+description=") || exit 59
+
+$HERE/cmd --help | grep 'Usage: cmd'
+
