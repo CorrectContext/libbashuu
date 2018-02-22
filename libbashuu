@@ -92,6 +92,15 @@ uu::internal-debug(){
 
 uu::internal-debug "Importing libbashuu..."
 
+uu::msg(){
+  # Prints user message on stderr.
+  # The idea here is that all user interaction happens on stderr.
+  # Stdout can be used for parseable command output which can be piped
+  # or used by other commands.
+  # We could detect if output is TTY, but in that case we lose some information
+  (>&2 echo "$@")
+}
+
 uu::error(){
   # Prints ERROR message on stderr. Does not exit the flow.
   (>&2 echo "[$_UU_TRACE_TOKEN][ERROR][$_UU_COMMAND_FILE]: $@")
