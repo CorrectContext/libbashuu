@@ -377,23 +377,27 @@ uu::option::validate(){
 }
 
 uu::command::main(){
-  # This command must be invoked with options to parse.
+  # This command must be invoked with command line arguments to parse.
   # In most cases you just want to do:
   # 
   #     uu::command::main "$@"
   #
   #TODO potentially we want to enabl extglob only in scope of this function so we need to restore it later
   shopt -s extglob
-  local var
-  local val
+  local option_value
+  local option_long_name
+  local option_env_name
   uu::internal-debug "uu::command::main - start"
-  for opt in ${!_UU_COMMAND_OPTION_TABLE_ENV[@]}
+  # we must guarantee that all environment variables are set
+  # so let's reexport what we have or set defaults
+  for option_long_name in ${!_UU_COMMAND_OPTION_TABLE_ENV[@]}
   do
-    val=${_UU_COMMAND_OPTION_TABLE_DEFAULT[$opt]}
-    if [ "${val:-}x" != x ];then
-      export ${_UU_COMMAND_OPTION_TABLE_ENV[$opt]}=$val
+    option_env_name=${_UU_COMMAND_OPTION_TABLE_ENV[$option_long_name]}
+    option_value=${!option_env_name:-${_UU_COMMAND_OPTION_TABLE_DEFAULT[$option_long_name]:-}}
+    # if there is a default and environment variable is not set, set it
+    if [ "${option_value:-}x" != x ];then
+      export ${_UU_COMMAND_OPTION_TABLE_ENV[$option_long_name]}=$option_value
     fi
-    unset val
   done
   while [ $# -gt 0 ];do
     case "$1" in

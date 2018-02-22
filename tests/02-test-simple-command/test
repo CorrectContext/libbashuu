@@ -31,3 +31,16 @@ description=") || exit 59
 
 $HERE/cmd --help | grep 'Usage: cmd'
 
+# --my-option2 is missing here, but it's required, even if it's not listed in help
+# so the command fails and says that it's required
+$HERE/cmd --my-option0 / --my-option1 / && exit 60 || true
+$HERE/cmd --my-option0 / --my-option1 / --my-option2 / || exit 61
+
+# MY_OPTION3 should have default value in that case
+( source $HERE/cmd --my-option0 / --my-option1 / --my-option2 / ; [ $MY_OPTION3 == "bla" ] || exit 62 )
+# override default value from CLI
+( source $HERE/cmd --my-option0 / --my-option1 / --my-option2 / --my-option3 my-value; [ $MY_OPTION3 == "my-value" ] || exit 63 )
+( source $HERE/cmd --my-option0 / --my-option1 / --my-option2 / -c my-value; [ $MY_OPTION3 == "my-value" ] || exit 64 )
+( source $HERE/cmd --my-option0 / --my-option1 / -b / -c my-value; [ $MY_OPTION3 == "my-value" ] || exit 65 )
+# override default value from ENV variable
+( MY_OPTION3=my-value && source $HERE/cmd --my-option0 / --my-option1 / --my-option2 / ; [ $MY_OPTION3 == "my-value" ] || exit 66 )

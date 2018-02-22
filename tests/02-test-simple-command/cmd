@@ -9,3 +9,4 @@ uu::command::main "$@"
 
 # at this point args are parsed and we can use environment variables
 echo "EXECUTING COMMAND"
+echo "MY_OPTION3 VALUE: $MY_OPTION3"
