@@ -410,6 +410,7 @@ uu::command::main(){
         ;;
       --uudebug)
         export UU_DEBUG=1
+        uu::internal-debug "--uudebug enabled, please remember that some pre-parsing internals are not shown. To enable more details use UUDEBUG=1 variable"
         ;;
       --META)
         echo "[meta]"
