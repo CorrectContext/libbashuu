@@ -496,7 +496,7 @@ uu::command::main(){
     uu::internal-debug "Environment variable '$opt' is available from option '${_UU_COMMAND_OPTION_RTABLE_ENV[$opt]}'"
   done
   uu::internal-debug "Available positional arguments: '${UU_COMMAND_POSITIONAL_ARGUMENTS:-}'"
-  uu::internal-debug "uu::command::main finished!"
+  uu::internal-debug "uu::command::main - finished!"
 }
 
 parse-bool(){
