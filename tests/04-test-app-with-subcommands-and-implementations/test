@@ -1,21 +1,28 @@
 #!/usr/bin/env bash
-exit 0
+set -eu
 HERE=$(dirname $0)
 
-for run_this in "$HERE/app" "$HERE/cmd1" "$HERE/cmd2"
-do
-  $run_this
-  $run_this -h
-  $run_this --help
-  DEBUG=1 $run_this --help
-  UUDEBUG=1 $run_this --help
-  UUDEBUG=1 DEBUG=1 $run_this --help
-  $run_this --debug
-  $run_this --uudebug
-  $run_this --meta
-done
+#for run_this in "$HERE/app" "$HERE/app-cmd1" "$HERE/app-cmd2"
+#do
+#  $run_this || true
+#  $run_this -h
+#  $run_this --help
+#  DEBUG=1 $run_this --help
+#  UUDEBUG=1 $run_this --help
+#  UUDEBUG=1 DEBUG=1 $run_this --help
+#done
+#for run_this in "$HERE/app-cmd1" "$HERE/app-cmd2"
+#do
+#  $run_this --META
+#done
+#
+#$HERE/app cmd1 --help
+#$HERE/app cmd2 --help
 
-$HERE/app cmd1
-$HERE/app cmd1 --help
-$HERE/app cmd2
-$HERE/app cmd2 --help
+# Do not remove this test, it's for regression with race condition, when
+# function detection for custom validators was breaking from time to time
+# (this test was good enough to reproduce issue each time)
+for a in `seq 200`
+do
+  $HERE/app cmd1 --env-env . --my-option qwe > /dev/null
+done

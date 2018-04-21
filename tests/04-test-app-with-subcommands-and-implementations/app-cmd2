@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 source libbashuu
 
-uu::command::set-scope my-scope
+uu::command::set-scope health
 uu::command::set-description "This command is only for testing"
 long=my-option short=a env=MY_OPTION validators= required=false uu::command::define-option
 uu::command::main "$@"

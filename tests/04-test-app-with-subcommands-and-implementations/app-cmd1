@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+set -euo pipefail
+export SHELLOPTS
+HERE=$(dirname "${BASH_SOURCE[0]}")
+export PATH="$HERE:$PATH"
+source libbashuu
+
+uu::command::set-scope service
+uu::command::set-description "This command is only for testing"
+uu::command::import-option option-env
+long=my-option short=a env=MY_OPTION validators= required=false uu::command::define-option
+uu::command::require-implementation app-cmd1-implementation
+uu::command::main "$@"
+
+source app-cmd1-implementation

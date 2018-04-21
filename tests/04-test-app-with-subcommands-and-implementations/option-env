@@ -1,0 +1,16 @@
+validate-env-env(){
+  if [ "${#1}" -gt 0 ];then
+    export SET_SOME_VALIDATION_VARIABLE=$1
+    return 0
+  else
+    return 1
+  fi
+}
+export -f validate-env-env
+long=env-env \
+  short=  \
+  env=ENV_ENV \
+  validators=validate-env-env \
+  help="Just checking the env" \
+  required=1 \
+  uu::command::define-option

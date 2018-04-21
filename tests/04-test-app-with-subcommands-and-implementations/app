@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+set -euo pipefail
+export SHELLOPTS
+HERE=$(dirname "${BASH_SOURCE[0]}")
+export PATH="$HERE:$PATH"
 source libbashuu
 
+uu::app::add-scope service "Commands for managing service"
+uu::app::add-scope health "Check health commands"
+uu::app::add-scope tools "Low level tools"
 uu::app::main "$@"
