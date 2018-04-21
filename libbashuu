@@ -362,7 +362,7 @@ uu::option::validate(){
         fi
       ;;
       *)
-        if type ${VALIDATOR:-} | head -n1 | grep -q function;then
+        if [ $(type -t "${VALIDATOR:-}") == "function" ];then
           if ! ${VALIDATOR} "${OPTION_VALUE}";then
             uu::internal-error "Custom validator '$VALIDATOR' failed to validate option --$OPTION_NAME against value '$OPTION_VALUE'" "" ""
             exit 1
